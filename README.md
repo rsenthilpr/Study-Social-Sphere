@@ -1,8 +1,8 @@
-# Social Media Platform using React, Node.js, and Firebase
+# Study Social Sphere using React, Node.js, and Firebase
 
 **Introduction**
 
-Social media platforms are interactive technologies that allow users to create or share information, ideas, career interests, and other forms of expression through online communities and networks. The vast number of social media services available, both independent and integrated with other platforms, can make defining them a challenge. However, some common features tie them together:
+Study Social Sphere is a social media platforms are interactive technologies that allow users to create or share information, ideas, career interests, and other forms of expression through online communities and networks. The vast number of social media services available, both independent and integrated with other platforms, can make defining them a challenge. However, some common features tie them together:
 
   - Interactive Web Applications: Social media platforms are interactive web applications built on Web 2.0 principles.
   - User-Generated Content: User-generated content, such as text posts, comments, photos, videos, and data from online interactions, is the foundation of social media.

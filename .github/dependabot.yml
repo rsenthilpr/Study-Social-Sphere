@@ -5,7 +5,7 @@ updates:
   - package-ecosystem: npm
     directory: /socialmedia-functions/functions
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 5
     groups:
       # One PR per batch rather than one per advisory.

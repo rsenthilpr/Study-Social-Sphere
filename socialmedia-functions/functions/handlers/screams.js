@@ -20,6 +20,7 @@ exports.getAllScreams = (req, res) => {
       return res.json(screams);
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.error(err);
       res.status(500).json({ error: err.code });
     });
@@ -47,6 +48,7 @@ exports.postOneScream = (req, res) => {
       res.json(resScream);
     })
     .catch((err) => {
+      if (res.headersSent) return;
       res.status(500).json({ error: 'something went wrong' });
       console.error(err);
     });
@@ -69,6 +71,7 @@ exports.getScream = (req, res) => {
         .get();
     })
     .then((data) => {
+      if (res.headersSent) return;
       screamData.comments = [];
       data.forEach((doc) => {
         screamData.comments.push(doc.data());
@@ -76,6 +79,7 @@ exports.getScream = (req, res) => {
       return res.json(screamData);
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.error(err);
       res.status(500).json({ error: err.code });
     });
@@ -103,12 +107,14 @@ exports.commentOnScream = (req, res) => {
       return doc.ref.update({ commentCount: doc.data().commentCount + 1 });
     })
     .then(() => {
+      if (res.headersSent) return;
       return db.collection('comments').add(newComment);
     })
     .then(() => {
       res.json(newComment);
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.log(err);
       res.status(500).json({ error: 'Something went wrong' });
     });
@@ -137,6 +143,7 @@ exports.likeScream = (req, res) => {
       }
     })
     .then((data) => {
+      if (res.headersSent) return;
       if (data.empty) {
         return db
           .collection('likes')
@@ -156,6 +163,7 @@ exports.likeScream = (req, res) => {
       }
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.error(err);
       res.status(500).json({ error: err.code });
     });
@@ -184,6 +192,7 @@ exports.unlikeScream = (req, res) => {
       }
     })
     .then((data) => {
+      if (res.headersSent) return;
       if (data.empty) {
         return res.status(400).json({ error: 'Scream not liked' });
       } else {
@@ -200,6 +209,7 @@ exports.unlikeScream = (req, res) => {
       }
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.error(err);
       res.status(500).json({ error: err.code });
     });
@@ -220,9 +230,11 @@ exports.deleteScream = (req, res) => {
       }
     })
     .then(() => {
+      if (res.headersSent) return;
       res.json({ message: 'Scream deleted successfully' });
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.error(err);
       return res.status(500).json({ error: err.code });
     });

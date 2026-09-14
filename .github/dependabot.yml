@@ -7,6 +7,20 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 5
+    ignore:
+      # Held at 13.x: firebase-functions-test@3.5.0 peers on
+      # firebase-admin "^8 || ^9 || ^10 || ^11 || ^12 || ^13", so v14 fails to
+      # install with ERESOLVE. Revisit when that peer range includes v14.
+      - dependency-name: firebase-admin
+        update-types:
+          - version-update:semver-major
+      # Held at 4.x: Express 5 changes path matching (path-to-regexp@8) and
+      # promise error propagation, which this API's 15 routes and .catch()
+      # chains rely on. There are no tests to catch a regression. Express 4 is
+      # still maintained. Worth doing as a deliberate migration, not a bump.
+      - dependency-name: express
+        update-types:
+          - version-update:semver-major
     groups:
       # One PR per batch rather than one per advisory.
       firebase:

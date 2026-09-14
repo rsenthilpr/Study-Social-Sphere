@@ -2,8 +2,14 @@ const { admin, db } = require('../util/admin');
 
 const config = require('../util/config');
 
-const firebase = require('firebase');
-firebase.initializeApp(config);
+const { initializeApp } = require('firebase/app');
+const {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} = require('firebase/auth');
+
+const firebaseAuth = getAuth(initializeApp(config));
 
 const {
   validateSignupData,
@@ -37,9 +43,11 @@ exports.signup = (req, res) => {
       if (doc.exists) {
         return res.status(400).json({ handle: 'this handle is already taken' });
       } else {
-        return firebase
-          .auth()
-          .createUserWithEmailAndPassword(newUser.email, newUser.password);
+        return createUserWithEmailAndPassword(
+          firebaseAuth,
+          newUser.email,
+          newUser.password
+        );
       }
     })
     .then((data) => {
@@ -84,9 +92,7 @@ exports.login = (req, res) => {
 
   if (!valid) return res.status(400).json(errors);
 
-  firebase
-    .auth()
-    .signInWithEmailAndPassword(user.email, user.password)
+  signInWithEmailAndPassword(firebaseAuth, user.email, user.password)
     .then((data) => {
       return data.user.getIdToken();
     })
@@ -207,14 +213,17 @@ exports.uploadImage = (req, res) => {
   const os = require('os');
   const fs = require('fs');
 
-  const busboy = new BusBoy({ headers: req.headers });
+  const busboy = BusBoy({ headers: req.headers });
 
   let imageToBeUploaded = {};
   let imageFileName;
 
-  busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-    console.log(fieldname, file, filename, encoding, mimetype);
-    if (mimetype !== 'image/jpeg' && mimetype !== 'image/png') {
+  busboy.on('file', (fieldname, file, info) => {
+    // busboy v1 passes a single `info` object instead of positional arguments.
+    const { filename, mimeType } = info;
+    if (mimeType !== 'image/jpeg' && mimeType !== 'image/png') {
+      // The stream must still be drained, or busboy never emits 'close'.
+      file.resume();
       return res.status(400).json({ error: 'Wrong file type submitted' });
     }
     // my.image.png => ['my', 'image', 'png']
@@ -224,10 +233,11 @@ exports.uploadImage = (req, res) => {
       Math.random() * 1000000000000
     ).toString()}.${imageExtension}`;
     const filepath = path.join(os.tmpdir(), imageFileName);
-    imageToBeUploaded = { filepath, mimetype };
+    imageToBeUploaded = { filepath, mimetype: mimeType };
     file.pipe(fs.createWriteStream(filepath));
   });
-  busboy.on('finish', () => {
+  busboy.on('close', () => {
+    if (!imageToBeUploaded.filepath) return;
     admin
       .storage()
       .bucket()

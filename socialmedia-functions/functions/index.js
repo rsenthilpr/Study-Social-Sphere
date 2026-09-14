@@ -1,49 +1,9 @@
 const functions = require('firebase-functions/v1');
-const app = require('express')();
-const FBAuth = require('./util/fbAuth');
-
-
-const cors = require('cors');
-app.use(cors());
-
 const { db } = require('./util/admin');
 
-const {
-  getAllScreams,
-  postOneScream,
-  getScream,
-  commentOnScream,
-  likeScream,
-  unlikeScream,
-  deleteScream
-} = require('./handlers/screams');
-const {
-  signup,
-  login,
-  uploadImage,
-  addUserDetails,
-  getAuthenticatedUser,
-  getUserDetails,
-  markNotificationsRead
-} = require('./handlers/users');
-
-// Scream routes
-app.get('/screams', getAllScreams);
-app.post('/scream', FBAuth, postOneScream);
-app.get('/scream/:screamId', getScream);
-app.delete('/scream/:screamId', FBAuth, deleteScream);
-app.get('/scream/:screamId/like', FBAuth, likeScream);
-app.get('/scream/:screamId/unlike', FBAuth, unlikeScream);
-app.post('/scream/:screamId/comment', FBAuth, commentOnScream);
-
-// users routes
-app.post('/signup', signup);
-app.post('/login', login);
-app.post('/user/image', FBAuth, uploadImage);
-app.post('/user', FBAuth, addUserDetails);
-app.get('/user', FBAuth, getAuthenticatedUser);
-app.get('/user/:handle', getUserDetails);
-app.post('/notifications', FBAuth, markNotificationsRead);
+// The Express app is built in app.js so that it can be mounted here for
+// deployment and imported directly by the route tests.
+const app = require('./app');
 
 exports.api = functions.region('asia-east2').https.onRequest(app);
 

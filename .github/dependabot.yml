@@ -1,0 +1,30 @@
+# Keeps dependency alerts arriving as reviewable PRs instead of accumulating
+# silently in the Security tab.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /socialmedia-functions/functions
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # One PR per batch rather than one per advisory.
+      firebase:
+        patterns:
+          - firebase
+          - firebase-admin
+          - firebase-functions
+          - firebase-functions-test
+      all-other-deps:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - firebase
+          - firebase-admin
+          - firebase-functions
+          - firebase-functions-test
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

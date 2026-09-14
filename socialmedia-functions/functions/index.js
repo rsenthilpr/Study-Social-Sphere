@@ -1,4 +1,4 @@
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 const app = require('express')();
 const FBAuth = require('./util/fbAuth');
 

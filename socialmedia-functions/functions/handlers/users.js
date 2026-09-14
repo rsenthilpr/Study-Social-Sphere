@@ -51,10 +51,12 @@ exports.signup = (req, res) => {
       }
     })
     .then((data) => {
+      if (res.headersSent) return;
       userId = data.user.uid;
       return data.user.getIdToken();
     })
     .then((idToken) => {
+      if (res.headersSent) return;
       token = idToken;
       const userCredentials = {
         handle: newUser.handle,
@@ -68,9 +70,11 @@ exports.signup = (req, res) => {
       return db.doc(`/users/${newUser.handle}`).set(userCredentials);
     })
     .then(() => {
+      if (res.headersSent) return;
       return res.status(201).json({ token });
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.error(err);
       if (err.code === 'auth/email-already-in-use') {
         return res.status(400).json({ email: 'Email is already is use' });
@@ -100,6 +104,7 @@ exports.login = (req, res) => {
       return res.json({ token });
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.error(err);
       // auth/wrong-password
       // auth/user-not-user
@@ -119,6 +124,7 @@ exports.addUserDetails = (req, res) => {
       return res.json({ message: 'Details added successfully' });
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.error(err);
       return res.status(500).json({ error: err.code });
     });
@@ -141,6 +147,7 @@ exports.getUserDetails = (req, res) => {
       }
     })
     .then((data) => {
+      if (res.headersSent) return;
       userData.screams = [];
       data.forEach((doc) => {
         userData.screams.push({
@@ -156,6 +163,7 @@ exports.getUserDetails = (req, res) => {
       return res.json(userData);
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.error(err);
       return res.status(500).json({ error: err.code });
     });
@@ -202,6 +210,7 @@ exports.getAuthenticatedUser = (req, res) => {
       return res.json(userData);
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.error(err);
       return res.status(500).json({ error: err.code });
     });
@@ -259,6 +268,7 @@ exports.uploadImage = (req, res) => {
         return res.json({ message: 'image uploaded successfully' });
       })
       .catch((err) => {
+      if (res.headersSent) return;
         console.error(err);
         return res.status(500).json({ error: 'something went wrong' });
       });
@@ -278,6 +288,7 @@ exports.markNotificationsRead = (req, res) => {
       return res.json({ message: 'Notifications marked read' });
     })
     .catch((err) => {
+      if (res.headersSent) return;
       console.error(err);
       return res.status(500).json({ error: err.code });
     });

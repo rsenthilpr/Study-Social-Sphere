@@ -50,3 +50,7 @@ triggers that fan out notifications and keep denormalised user images in sync.
 `axios`) that consumed that API. Only its Hosting configuration survives in this
 repository - the application source was never committed, so the folder cannot be
 installed or built from here.
+
+The hosted demo is no longer running - the Firebase project that backed it is
+no longer active, so the deployed API does not respond. The backend source in
+this repository is complete and can be deployed to a new Firebase project.
